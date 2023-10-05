@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 from collections import defaultdict
-
+import os
 
 class TransformadorDados:
     def __init__(self, palavras_chave):
@@ -27,7 +27,7 @@ class TransformadorDados:
     def calcular_quantidade_por_fonte_autor(self):
         df = pd.DataFrame(self.dados_armazenados)
 
-        quantidade_por_fonte = df['source'].apply(lambda x: x['name']).value_counts().to_dict()
+        quantidade_por_fonte = df['source'].value_counts().to_dict()
         quantidade_por_autor = df['author'].value_counts().to_dict()
 
         return {
@@ -50,7 +50,7 @@ class TransformadorDados:
 
             contagem_por_data = {
                 'Quantidade por dia': quantidade_por_dia,
-                'Quantidade por mês': quantidade_por_mes,
+                'Quantidade por mes': quantidade_por_mes,
                 'Quantidade por ano': quantidade_por_ano
             }
 
@@ -69,12 +69,12 @@ class TransformadorDados:
             'quantidade_por_palavra_chave': contagem_por_palavra_chave
         }
 
-        with open("/home/airelribeiro/Desktop/Tudo/ada_engenharia_de_dados/extracao/extracao_projeto/dados_transformados.json", 'w') as file:
+        with open(f"{os.getcwd()}/database/dados_transformados.json", 'w') as file:
             json.dump(dados_transformados, file, indent=4)
 
-    def recupera_dados_armazenados():
+    def recupera_dados_armazenados(self):
       dados_armazenados = []
-      with open("/home/airelribeiro/Desktop/Tudo/ada_engenharia_de_dados/extracao/extracao_projeto/dados_armazenados.json", 'r') as file:
+      with open(f"{os.getcwd()}/database/dados_armazenados.json", 'r') as file:
         dados_armazenados = json.load(file)
 
       return dados_armazenados
@@ -83,5 +83,3 @@ if __name__ == "__main__":
     palavras_chave = ['dna', 'rna']
     transformador = TransformadorDados(palavras_chave)
     transformador.salvar_resultados_json()
-
-    
