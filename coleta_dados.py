@@ -1,42 +1,65 @@
 import requests
 import json
-import pandas as pd
+import os
 
+class CargaDeDados:
+    def __init__(self):
+        self.dados_armazenados = []
 
-def fazer_carga_em_batches(palavras_chave):
-    dados_armazenados = []  # Lista de dados armazenados
-    
-    # Carregar os dados do arquivo (se existir)
-    try:
-        with open("/home/airelribeiro/Desktop/Tudo/ada_engenharia_de_dados/extracao/extracao_projeto/dados_armazenados.json", 'r') as file:
-            dados_antigos = json.load(file)
-            dados_armazenados.extend(dados_antigos)
-    except FileNotFoundError:
-        pass
+    def carregar_dados_antigos(self, file_path):
+        try:
+            with open(file_path, 'r') as file:
+                dados_antigos = json.load(file)
+                self.dados_armazenados.extend(dados_antigos)
+        except FileNotFoundError:
+            pass
 
-    for palavra_chave in palavras_chave:         
-        # Busca na API com cada palavra-chave
-        url = f'https://newsapi.org/v2/everything?q={palavra_chave}'
-        response = requests.get(url, headers={"X-Api-Key": "528d65099fb24bf6a49142f9af54ed02"})
-        data = json.loads(response.text)
-        articles = data['articles']
+    def limpar_dados(self, article, palavra_chave):
+        return {
+            "source": article.get('source', {}).get('name', 'string'),
+            "author": article.get('author', 'string'),
+            "title": article.get('title', 'string'),
+            "description": article.get('description', 'string'),
+            "url": article.get('url', 'string'),
+            "publishedAt": article.get('publishedAt', 'string'),
+            "content": article.get('content', 'string'),
+            "palavras_chave": palavra_chave
+        }
 
-        # Cria um conjunto das URLs dos artigos atuais
-        urls_atuais = set(article['url'] for article in dados_armazenados)
+    def fazer_carga_em_batches(self, palavras_chave):
+        for palavra_chave in palavras_chave:
+            # Busca na API com cada palavra-chave
+            url = f'https://newsapi.org/v2/everything?q={palavra_chave}'
+            response = requests.get(url, headers={"X-Api-Key": "528d65099fb24bf6a49142f9af54ed02"})
+            data = json.loads(response.text)
+            articles = data['articles']
 
-        # Adiciona artigo por artigo se for novo
-        for article in articles:
-            if article['url'] not in urls_atuais:
-                article['palavras_chave'] = [palavra_chave]
-                dados_armazenados.append(article)
-            else:
-                article_existente = next((x for x in dados_armazenados if x['url'] == article['url']), None)
-                article_existente['palavras_chave'].append(palavra_chave)
+            # Cria um conjunto das URLs dos artigos atuais
+            urls_atuais = set(article['url'] for article in self.dados_armazenados)
+
+            # Adiciona artigo por artigo se for novo
+            for article in articles:
+                if article['url'] not in urls_atuais:
+                    article_cleaned = self.limpar_dados(article, palavra_chave)
+                    self.dados_armazenados.append(article_cleaned)
+                else:
+                    article_existente = next((x for x in self.dados_armazenados if x['url'] == article['url']), None)
+                    article_existente['palavras_chave'] += f', {palavra_chave}'
 
     # Salva os dados atualizados
-    with open("/home/airelribeiro/Desktop/Tudo/ada_engenharia_de_dados/extracao/extracao_projeto/dados_armazenados.json", 'w') as file:
-        json.dump(dados_armazenados, file, indent=4)
+    def salvar_dados(self, file_path):
+        with open(file_path, 'w') as file:
+            json.dump(self.dados_armazenados, file, indent=4)
 
 if __name__ == "__main__":
+    file_path = f"{os.getcwd()}/database/dados_armazenados.json"
     palavras_chave = ['dna', 'rna']
-    fazer_carga_em_batches(palavras_chave)
+
+    carga_dados = CargaDeDados()
+    carga_dados.carregar_dados_antigos(file_path)
+    carga_dados.fazer_carga_em_batches(palavras_chave)
+    carga_dados.salvar_dados(file_path)
+
+
+
+

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Visualizador de Dados</title>
+    <style>
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        border: 1px solid #ccc;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+
+      a {
+        color: blue;
+        text-decoration: underline;
+      }
+
+      a:hover {
+        color: darkblue;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="article-list" class="article-table-container"></div>
+
+    <script>
+      async function fetchArticles() {
+        const response = await fetch('/get_dados');
+        const data = await response.json();
+
+        const articleList = document.getElementById('article-list');
+        articleList.innerHTML = '';
+
+        const table = document.createElement('table');
+        table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Source</th>
+                        <th>Author</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>URL</th>
+                        <th>Published At</th>
+                        <th>Content</th>
+                        <th>Palavras-chave</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            `;
+
+        data.forEach((article) => {
+          const row = table.insertRow();
+          row.innerHTML = `
+                    <td>${article.source}</td>
+                    <td>${article.author}</td>
+                    <td>${article.title}</td>
+                    <td>${article.description}</td>
+                    <td><a href="${article.url}" target="_blank">${article.url}</a></td>
+                    <td>${article.publishedAt}</td>
+                    <td>${article.content}</td>
+                    <td>${article.palavras_chave}</td>
+                `;
+        });
+
+        articleList.appendChild(table);
+      }
+
+      fetchArticles();
+    </script>
+  </body>
+</html>
