@@ -1,6 +1,8 @@
+## Projeto desenvolvido durante a disciplina de Extração de dados.
+GRUPO: Airel Ribeiro; Jhonata Leôncio; Marcelo; Rafael Gomes; Pedro Teixeira
+
 # Sistema de Monitoramento de Avanços no Campo da Genômica
 
-## Projeto desenvolvido durante a disciplina de Extração de dos.
 
 Sistema desenvolvido para coleta, estruturação e apresentação periódica dos estudos publicados no campo da genômica.
 
