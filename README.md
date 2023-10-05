@@ -4,6 +4,26 @@
 
 Sistema desenvolvido para coleta, estruturação e apresentação periódica dos estudos publicados no campo da genômica.
 
+## Termos de consulta
+
+Por meio de pesquisas em bases de estudos genômicos, são recomendados para consulta os termos:
+
+- Allele
+- Chromosome
+- DNA
+- DNA Methylation
+- DNA Mutation
+- Dominant
+- Epigenetics
+- Gene
+- Genomics
+- Genotype
+- Metabolites
+- Phenotype
+- Protein
+- Recessive
+- Single nucleotide polymorphism
+
 ## Funcionalidades
 
 ### O sistema possui as seguintes funcionalidades:
